@@ -5,9 +5,11 @@ import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+//@NoArgsConstructor
+//@Data
 @Entity
-@Table(name = "user")
-public class User {
+@Table(name = "userInfo")
+public class UserInfo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="id")
@@ -24,10 +26,8 @@ public class User {
 
     @OneToMany(mappedBy = "user" ,
                 fetch = FetchType.LAZY ,
-              cascade = {
-            CascadeType.DETACH , CascadeType.MERGE,
-            CascadeType.PERSIST , CascadeType.REFRESH
-    })
+              cascade= CascadeType.ALL
+    )
     private List<Orders> orders;
 
     @OneToMany(mappedBy = "user",
@@ -42,11 +42,15 @@ public class User {
             {CascadeType.DETACH , CascadeType.MERGE , CascadeType.PERSIST , CascadeType.REFRESH})
     private Account account;
 
-    public User(){
+    @OneToOne(mappedBy = "user" , cascade =
+            {CascadeType.DETACH , CascadeType.MERGE , CascadeType.PERSIST , CascadeType.REFRESH})
+    private Cart cart;
+
+    public UserInfo(){
 
     }
 
-    public User(String name, String email, String password) {
+    public UserInfo(String name, String email, String password) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -106,6 +110,14 @@ public class User {
 
     public void setAccount(Account account) {
         this.account = account;
+    }
+
+    public Cart getCart() {
+        return cart;
+    }
+
+    public void setCart(Cart cart) {
+        this.cart = cart;
     }
 
     @Override

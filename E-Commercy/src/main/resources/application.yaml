@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: E-Commercy
+  datasource:
+    url: jdbc:postgresql://localhost:5432/E-Commerce
+    username: postgres
+    password: meroo
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+  webmvc:
+    cors:
+      allowed-origins: http://localhost:3000

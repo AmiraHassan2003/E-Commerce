@@ -25,12 +25,9 @@ public class Orders {
     @Column(name="address")
     private String address;
 
-    @ManyToOne(cascade = {
-            CascadeType.DETACH , CascadeType.MERGE,
-            CascadeType.PERSIST , CascadeType.REFRESH
-    })
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name="user_id")
-    private User user;
+    private UserInfo user;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {
             CascadeType.DETACH , CascadeType.MERGE , CascadeType.PERSIST , CascadeType.REFRESH
@@ -101,11 +98,11 @@ public class Orders {
         this.products = products;
     }
 
-    public User getUser() {
+    public UserInfo getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserInfo user) {
         this.user = user;
     }
 

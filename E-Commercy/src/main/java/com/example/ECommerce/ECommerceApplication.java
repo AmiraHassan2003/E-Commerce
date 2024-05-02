@@ -24,7 +24,7 @@ public class ECommerceApplication {
 //			getUserById(dao);
 //			deleteUserById(dao);
 //			updateUser(dao);
-//			getUser(Dao dao);
+//			getUser(dao);
 //			getOrdersByUserId(dao);
 
 //			###### Relation between Category And Product #######
@@ -51,11 +51,8 @@ public class ECommerceApplication {
 
 			// ###### Payment #######
 //			deletePayment(dao);
-//			void updatePayment(Payment payment);
-//
-//			// ###### Product #######
-//			void deleteProduct(int id);
-//			void updateProduct(Product product);
+//			updatePayment(dao);
+			getPayments(dao);
 
 			// ###### Relation between User And Account #######
 //			getAccountByUserId(dao);
@@ -76,12 +73,18 @@ public class ECommerceApplication {
 		System.out.println("Done!!!");
 	}
 
+	private void getPayments(Dao dao){
+		int id = 7;
+		System.out.println(dao.getPaymentByUserId(id));
+	}
+
 	// ###### Relation between User And Account #######
 	private void getAccountByUserId(Dao dao) {
-		int id = 8;
-		User user = dao.getAccountByUserId(id);
-		System.out.println("User : " + user);
-		System.out.println("Account : " + user.getAccount());
+		int id = 7;
+		Account account = dao.getAccountByUserId(id);
+		System.out.println("User : " + account.getUser());
+		System.out.println("Account : " + account);
+
 	}
 
 	//			##### Account ####
@@ -102,42 +105,35 @@ public class ECommerceApplication {
 	// ###### Relation between User And Payment #######
 	private void getPaymentByUserId(Dao dao) {
 		int id = 8;
-		User user = dao.getPaymentByUserId(id);
-		System.out.println("User : " + user);
-		System.out.println("Payments : " + user.getPayments());
+		List<Payment> payments = dao.getPaymentByUserId(id);
+		System.out.println("Payments : " + payments);
 	}
 
 	// ###### Relation between Orders And Product #######
 	private void getOrdersByProductId(Dao dao) {
 		int idOfProduct = 3;
-		Product product = dao.getOrderByProductId(idOfProduct);
-		System.out.println("Product : " + product);
-		System.out.println("Orders : " + product.getOrders());
+		List<Orders> orders = dao.getOrderByProductId(idOfProduct);
+		System.out.println("Orders : " + orders);
 	}
 
 	private void getProductsByOrderId(Dao dao) {
 		int idOfOrder = 1;
-		Orders order = dao.getProductByOrderId(idOfOrder);
-		System.out.println("Order : " + order);
-		System.out.println("Products: " + order.getProducts());
+		List<Product> products = dao.getProductByOrderId(idOfOrder);
+		System.out.println("Products: " + products);
 	}
 
 	// ###### Relation between Category And Product #######
 	private void getProductsByCategoryId(Dao dao) {
 		int id = 2;
-		Category category = dao.getProductByCategoryId(id);
-		System.out.println("Category : " + category);
-		List<Product> products = category.getProducts();
+		List<Product> products = dao.getProductByCategoryId(id);
 		System.out.println("Orders : " + products);
 	}
 
 	private void updateCategory(Dao dao) {
-		int id = 6;
-		Category category = dao.getProductByCategoryId(id);
-		System.out.println("Before -> Category : " + category);
+		Category category = new Category();
 		category.setNameOfCategory("category666");
 		dao.updateCategory(category);
-		System.out.println("After -> Category : " + category);
+		System.out.println("Category : " + category);
 	}
 
 	private void deleteCategoryById(Dao dao) {
@@ -148,7 +144,7 @@ public class ECommerceApplication {
 
 	private void getCategoryById(Dao dao) {
 		int id = 1;
-		Category category = dao.getProductByCategoryId(id);
+		Category category = dao.getCategoryById(id);
 		System.out.println("CATEGORY : " + category);
 	}
 
@@ -167,15 +163,13 @@ public class ECommerceApplication {
 
 	private void getOrdersByUserId(Dao dao) {
 		int id = 8;
-		User user = dao.getOrdersByUserId(id);
-		System.out.println("Uesr : " + user);
-		List<Orders> orders = user.getOrders();
+		List<Orders> orders = dao.getOrdersByUserId(id);
 		System.out.println("Orders : " + orders);
 	}
 
 	private void getUser(Dao dao) {
-		int id = 8;
-		User user = dao.getUserWithAllInfo(id);
+		int id = 1;
+		UserInfo user = dao.getUserWithAllInfo(id);
 		System.out.println("User : " + user);
 		System.out.println("Payments : " + user.getPayments());
 		System.out.println("Orders : " + user.getOrders());
@@ -184,7 +178,7 @@ public class ECommerceApplication {
 
 	private void updateUser(Dao dao) {
 		int id = 8;
-		User user = dao.getUserById(id);
+		UserInfo user = dao.getUserById(id);
 		user.setName("MORAAAAA");
 		dao.updateUser(user);
 		System.out.println("DONE!!!");
@@ -197,13 +191,13 @@ public class ECommerceApplication {
 	}
 
 	private void getUserById(Dao dao) {
-		int id = 8;
-		User user = dao.getUserById(id);
+		int id = 1;
+		UserInfo user = dao.getUserById(id);
 		System.out.println("USER : " + user);
 	}
 
 	private void createUser(Dao dao) {
-		User user = new User("moraa", "moraa@123.com", "12235");
+		UserInfo user = new UserInfo("moraa", "moraa@123.com", "12235");
 		Orders order1 = new Orders(3456, "date1" , 122 , "order1");
 		Orders order2 = new Orders(1256, "date2", 122 , "order2");
 		user.addOrder(order1);

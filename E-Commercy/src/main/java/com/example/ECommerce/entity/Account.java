@@ -17,12 +17,10 @@ public class Account {
     private String username;
 
     @OneToOne(fetch = FetchType.LAZY,
-            cascade = {
-                    CascadeType.DETACH , CascadeType.MERGE,
-                    CascadeType.PERSIST , CascadeType.REFRESH
-            })
+                    cascade= CascadeType.ALL
+            )
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserInfo user;
 
     public Account(){
 
@@ -57,11 +55,11 @@ public class Account {
         this.username = username;
     }
 
-    public User getUser() {
+    public UserInfo getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserInfo user) {
         this.user = user;
     }
 

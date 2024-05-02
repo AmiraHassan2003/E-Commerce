@@ -6,15 +6,15 @@ import java.util.List;
 
 public interface Dao {
     // ###### User #######
-    void saveUser(User user);
-    User getUserById(int id);
+    void saveUser(UserInfo user);
+    UserInfo getUserById(int id);
     void deleteUserById(int id);
-    void updateUser(User user);
-    User getUserWithAllInfo(int id);
+    void updateUser(UserInfo user);
+    UserInfo getUserWithAllInfo(int id);
 
 
     // ###### Relation between User And Orders #######
-    User getOrdersByUserId(int id);
+    List<Orders> getOrdersByUserId(int id);
 
     // ###### Category #######
     void saveCategory(Category category);
@@ -23,19 +23,24 @@ public interface Dao {
     void updateCategory(Category category);
 
     // ###### Relation between Category And Product #######
-    Category getProductByCategoryId(int id);
+    List<Product> getProductByCategoryId(int id);
 
     // ###### Relation between Orders And Product #######
-    Orders getProductByOrderId(int idOfOrder);
-    Product getOrderByProductId(int idOfProduct);
+    List<Product> getProductByOrderId(int idOfOrder);
+    List<Orders> getOrderByProductId(int idOfProduct);
 
     // ###### Relation between User And Payment #######
-    User getPaymentByUserId(int id);
+    List<Payment> getPaymentByUserId(int id);
 
     // ###### Account #######
     Account getAccountById(int id);
     void deleteAccount(int id);
     void updateAccount(Account account);
+
+    // ###### Cart #######
+    Cart getCartById(int id);
+    void deleteACart(int id);
+    void updateCart(Cart cart);
 
     // ###### Order #######
     Orders getOrderById(int id);
@@ -53,7 +58,10 @@ public interface Dao {
     void updateProduct(Product product);
 
     // ###### Relation between User And Account #######
-    User getAccountByUserId(int id);
+    Account getAccountByUserId(int id);
+
+    // ###### Relation between User And Cart #######
+    Cart getCartByUserId(int id);
 
 
 

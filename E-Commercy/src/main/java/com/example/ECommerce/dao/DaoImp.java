@@ -4,11 +4,12 @@ import com.example.ECommerce.entity.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.transaction.Transactional;
+import org.hibernate.query.Order;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.concurrent.Callable;
 
 @Repository
 public class DaoImp implements Dao{
@@ -18,51 +19,70 @@ public class DaoImp implements Dao{
     // ###### Relation between User And Orders #######
     @Override
     @Transactional
-    public void saveUser(User user) {
+    public void saveUser(UserInfo user) {
         entityManager.persist(user);
     }
 
     @Override
-    public User getUserById(int id) {
-        User user = entityManager.find(User.class , id);
-        return user;
+    public UserInfo getUserById(int id) {
+        UserInfo user = null;
+        try{
+            user = entityManager.find(UserInfo.class , id);
+        } catch (Exception e) {
+            System.out.println("The Id Is invalid :(");
+        }
+            return user;
     }
 
     @Override
     @Transactional
     public void deleteUserById(int id) {
-        User user = this.getUserById(id);
-        entityManager.remove(user);
+        try{
+            UserInfo user = this.getUserById(id);
+            entityManager.remove(user);
+        } catch (Exception e) {
+            System.out.println("The Id Is invalid :(");
+        }
     }
 
     @Override
     @Transactional
-    public void updateUser(User user) {
+    public void updateUser(UserInfo user) {
         entityManager.merge(user);
     }
 
     @Override
-    public User getUserWithAllInfo(int id) {
-        TypedQuery<User> query = entityManager.createQuery(
-                "select u from User u " +
-                        "JOIN FETCH u.orders "+
-                        "JOIN u.payments " +
-                        "JOIN u.account " +
-                        "where u.id = :data ", User.class);
-        query.setParameter("data" , id);
-        User user = query.getSingleResult();
+    public UserInfo getUserWithAllInfo(int id) {
+        UserInfo user = null;
+        try {
+            TypedQuery<UserInfo> query = entityManager.createQuery(
+                    "select u from UserInfo u " +
+                            "JOIN FETCH u.orders "+
+                            "JOIN u.payments " +
+                            "JOIN u.account " +
+                            "where u.id = :data ", UserInfo.class);
+            query.setParameter("data" , id);
+            user = query.getSingleResult();
+        } catch (Exception e) {
+            System.out.println("The Id Is invalid :(");
+        }
         return user;
     }
 
     @Override
-    public User getOrdersByUserId(int id) {
-        TypedQuery<User> query = entityManager.createQuery(
-                "select u from User u " +
-                        "JOIN FETCH u.orders " +
-                        "where u.id = :data ", User.class);
-        query.setParameter("data" , id);
-        User user = query.getSingleResult();
-        return user;
+    public List<Orders> getOrdersByUserId(int id) {
+        List<Orders> orders = null;
+        try{
+            TypedQuery<UserInfo> query = entityManager.createQuery(
+                    "select u from UserInfo u " +
+                            "JOIN FETCH u.orders " +
+                            "where u.id = :data ", UserInfo.class);
+            query.setParameter("data" , id);
+            orders = query.getSingleResult().getOrders();
+        } catch (Exception e) {
+            System.out.println("The Id Is invalid :(");
+        }
+        return orders;
     }
 
     // ###### Relation between Category And Product #######
@@ -74,15 +94,24 @@ public class DaoImp implements Dao{
 
     @Override
     public Category getCategoryById(int id) {
-        Category category = entityManager.find(Category.class , id);
-        return category;
+        Category category = null;
+        try{
+            category = entityManager.find(Category.class , id);
+        } catch (Exception e) {
+            System.out.println("The Id Is invalid :(");
+        }
+            return category;
     }
 
     @Override
     @Transactional
     public void deleteCategoryById(int id) {
-        Category category = this.getCategoryById(id);
-        entityManager.remove(category);
+        try{
+            Category category = this.getCategoryById(id);
+            entityManager.remove(category);
+        } catch (Exception e) {
+            System.out.println("The Id Is invalid :(");
+        }
     }
 
     @Override
@@ -92,60 +121,92 @@ public class DaoImp implements Dao{
     }
 
     @Override
-    public Category getProductByCategoryId(int id) {
-        TypedQuery<Category> query = entityManager.createQuery(
-                "SELECT c FROM Category c " +
-                        "JOIN FETCH c.products " +
-                        "WHERE c.id = :data", Category.class);
-        query.setParameter("data", id);
-        return query.getSingleResult();
+    public List<Product> getProductByCategoryId(int id) {
+        List<Product> products = null;
+        try{
+            TypedQuery<Category> query = entityManager.createQuery(
+                    "SELECT c FROM Category c " +
+                            "JOIN FETCH c.products " +
+                            "WHERE c.id = :data", Category.class);
+            query.setParameter("data", id);
+            products = query.getSingleResult().getProducts();
+        } catch (Exception e) {
+            System.out.println("The Id Is invalid :(");
+        }
+        return products;
     }
 
     // ###### Relation between Orders And Product #######
     @Override
-    public Orders getProductByOrderId(int idOfOrder) {
-        TypedQuery<Orders> query = entityManager.createQuery(
-                "SELECT o FROM Orders o " +
-                        "JOIN FETCH o.products " +
-                        "WHERE o.id = :data", Orders.class);
-        query.setParameter("data", idOfOrder);
-        return query.getSingleResult();
+    public List<Product> getProductByOrderId(int idOfOrder) {
+        List<Product> products = null;
+        try{
+            TypedQuery<Orders> query = entityManager.createQuery(
+                    "SELECT o FROM Orders o " +
+                            "JOIN FETCH o.products " +
+                            "WHERE o.id = :data", Orders.class);
+            query.setParameter("data", idOfOrder);
+            products = query.getSingleResult().getProducts();
+        } catch (Exception e) {
+            System.out.println("The Id Is invalid :(");
+        }
+            return products;
     }
 
     @Override
-    public Product getOrderByProductId(int idOfProduct) {
-        TypedQuery<Product> query = entityManager.createQuery(
-                "SELECT p FROM Product p " +
-                        "JOIN FETCH p.orders " +
-                        "WHERE p.id = :data", Product.class);
-        query.setParameter("data", idOfProduct);
-        return query.getSingleResult();
+    public List<Orders> getOrderByProductId(int idOfProduct) {
+        List<Orders> orders = null;
+        try{
+            TypedQuery<Product> query = entityManager.createQuery(
+                    "SELECT p FROM Product p " +
+                            "JOIN FETCH p.orders " +
+                            "WHERE p.id = :data", Product.class);
+            query.setParameter("data", idOfProduct);
+            orders = query.getSingleResult().getOrders();
+        } catch (Exception e) {
+            System.out.println("The Id Is invalid :(");
+        }
+        return orders;
     }
 
     // ###### Relation between User And Payment #######
     @Override
-    public User getPaymentByUserId(int id) {
-        TypedQuery<User> query = entityManager.createQuery(
-                "select u from User u " +
-                        "JOIN FETCH u.payments " +
-                        "where u.id = :data ", User.class);
-        query.setParameter("data" , id);
-        User user = query.getSingleResult();
-        return user;
+    public List<Payment> getPaymentByUserId(int id) {
+        UserInfo user = null;
+        try{
+            TypedQuery<UserInfo> query = entityManager.createQuery(
+                    "select u from UserInfo u " +
+                            "JOIN FETCH u.payments " +
+                            "where u.id = :data ", UserInfo.class);
+            query.setParameter("data" , id);
+            user = query.getSingleResult();
+        } catch (Exception e) {
+            System.out.println("The Id Is invalid :(");
+        }
+        return user.getPayments();
     }
 
     // ###### Account #######
     @Override
     public Account getAccountById(int id) {
-        Account account = entityManager.find(Account.class , id);
-        return account;
+        Account account = null;
+        try{
+            account = entityManager.find(Account.class , id);
+        } catch (Exception e) {
+            System.out.println("The Id Is invalid :(");
+        }
+            return account;
     }
 
     @Override
     @Transactional
     public void deleteAccount(int id) {
-        Account account = this.getAccountById(id);
-        entityManager.remove(account);
+        try{
+            Account account = this.getAccountById(id);
+            entityManager.remove(account);
+        } catch (Exception e) {
+            System.out.println("The Id Is invalid :(");
+        }
     }
 
     @Override
@@ -154,18 +215,56 @@ public class DaoImp implements Dao{
         entityManager.merge(account);
     }
 
+    // ###### Cart #######
+    @Override
+    public Cart getCartById(int id) {
+        Cart cart = null;
+        try{
+            cart = entityManager.find(Cart.class , id);
+        } catch (Exception e) {
+            System.out.println("The Id Is invalid :(");
+        }
+            return cart;
+    }
+
+    @Override
+    @Transactional
+    public void deleteACart(int id) {
+        try{
+            Cart cart = this.getCartById(id);
+            entityManager.remove(cart);
+        } catch (Exception e) {
+            System.out.println("The Id Is invalid :(");
+        }
+    }
+
+    @Override
+    @Transactional
+    public void updateCart(Cart cart) {
+        entityManager.merge(cart);
+    }
+
     // ###### Orders #######
     @Override
     public Orders getOrderById(int id) {
-        Orders orders = entityManager.find(Orders.class , id);
+        Orders orders = null;
+        try{
+            orders = entityManager.find(Orders.class , id);
+        } catch (Exception e) {
+            System.out.println("The Id Is invalid :(");
+        }
         return orders;
     }
 
     @Override
     @Transactional
     public void deleteOrder(int id) {
-        Orders orders = this.getOrderById(id);
-        entityManager.remove(orders);
+        try{
+            Orders orders = this.getOrderById(id);
+            entityManager.remove(orders);
+        } catch (Exception e) {
+            System.out.println("The Id Is invalid :(");
+        }
     }
 
     @Override
@@ -177,15 +276,24 @@ public class DaoImp implements Dao{
     // ###### Payment #######
     @Override
     public Payment getPaymentById(int id) {
-        Payment payment = entityManager.find(Payment.class , id);
-        return payment;
+        Payment payment = null;
+        try{
+            payment = entityManager.find(Payment.class , id);
+        } catch (Exception e) {
+            System.out.println("The Id Is invalid :(");
+        }
+            return payment;
     }
 
     @Override
     @Transactional
     public void deletePayment(int id) {
+        try{
         Payment payment = this.getPaymentById(id);
         entityManager.remove(payment);
+        } catch (Exception e) {
+            System.out.println("The Id Is invalid :(");
+        }
     }
 
     @Override
@@ -197,15 +305,25 @@ public class DaoImp implements Dao{
     // ###### Product #######
     @Override
     public Product getProductById(int id) {
-        Product product = entityManager.find(Product.class , id);
-        return product;
+        Product product = null;
+        try{
+            product = entityManager.find(Product.class , id);
+        } catch (Exception e) {
+            System.out.println("The Id Is invalid :(");
+        }
+            return product;
     }
 
     @Override
     @Transactional
     public void deleteProduct(int id) {
-        Product product = this.getProductById(id);
-        entityManager.remove(product);
+        Product product = null;
+        try {
+            product = this.getProductById(id);
+            entityManager.remove(product);
+        } catch (Exception e) {
+            System.out.println("The Id Is invalid :(");
+        }
     }
 
     @Override
@@ -216,14 +334,36 @@ public class DaoImp implements Dao{
 
     // ###### Relation between User And Account #######
     @Override
-    public User getAccountByUserId(int id) {
-        TypedQuery<User> query = entityManager.createQuery(
-                "select u from User u " +
-                        "JOIN FETCH u.account " +
-                        "where u.id = :data ", User.class);
-        query.setParameter("data" , id);
-        User user = query.getSingleResult();
-        return user;
+    public Account getAccountByUserId(int id) {
+        UserInfo user = null;
+        try{
+            TypedQuery<UserInfo> query = entityManager.createQuery(
+                    "select u from UserInfo u " +
+                            "JOIN FETCH u.account " +
+                            "where u.id = :data ", UserInfo.class);
+            query.setParameter("data" , id);
+            user = query.getSingleResult();
+        } catch (Exception e) {
+            System.out.println("The User Is not exist :(");
+        }
+        return user.getAccount();
+    }
+
+    // ###### Relation between User And Cart #######
+    @Override
+    public Cart getCartByUserId(int id) {
+        UserInfo user = null;
+        try{
+            TypedQuery<UserInfo> query = entityManager.createQuery(
+                    "select u from UserInfo u " +
+                            "JOIN FETCH u.cart " +
+                            "where u.id = :data ", UserInfo.class);
+            query.setParameter("data" , id);
+            user = query.getSingleResult();
+        } catch (Exception e) {
+            System.out.println("The User Is not exist :(");
+        }
+            return user.getCart();
     }
 
 }

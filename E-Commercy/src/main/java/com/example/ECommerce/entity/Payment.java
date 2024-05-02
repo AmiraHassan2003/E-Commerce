@@ -20,7 +20,7 @@ public class Payment {
             cascade = {CascadeType.DETACH, CascadeType.MERGE,
                         CascadeType.PERSIST, CascadeType.REFRESH})
     @JoinColumn(name = "user_id")
-    private User user;
+    private UserInfo user;
 
     public Payment(){
 
@@ -55,11 +55,11 @@ public class Payment {
         this.method = method;
     }
 
-    public User getUser() {
+    public UserInfo getUser() {
         return user;
     }
 
-    public void setUser(User user) {
+    public void setUser(UserInfo user) {
         this.user = user;
     }
 
